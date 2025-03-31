@@ -1,5 +1,6 @@
 package com.example.demo.infrastructure.exception;
 
+import com.example.demo.domain.entities.exceptions.UserAlreadyExistException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,11 +18,21 @@ public class GlobalExceptionHandler {
                 .body(new ErrorMessage(ex.getErrorCode(),ex.getMessage()));
     }
 
+    @ExceptionHandler(UserAlreadyExistException.class)
+    public ResponseEntity<ErrorMessage> UserAlreadyExistException(UserAlreadyExistException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorMessage(ex.getErrorCode(),ex.getMessage()));
+    }
+
+
     @ExceptionHandler(CompletionException.class)
     public ResponseEntity<ErrorMessage> handleCompletionException(CompletionException ex) {
         Throwable cause = ex.getCause();
         if (cause instanceof UsersNotFoundException) {
             return handleUserNotFoundException((UsersNotFoundException) cause);
+        } else if (cause instanceof  UserAlreadyExistException) {
+            return UserAlreadyExistException((UserAlreadyExistException) cause);
+
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorMessage("Error: 02","Internal server error"));

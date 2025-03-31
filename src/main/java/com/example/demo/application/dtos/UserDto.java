@@ -3,6 +3,9 @@ package com.example.demo.application.dtos;
 
 import com.example.demo.domain.entities.User;
 
+import java.util.Objects;
+import java.util.Optional;
+
 public class UserDto {
 
     private int Id;
